@@ -30,13 +30,23 @@ with ftplib.FTP() as ftp:
     ftp.cwd('HOME')
 
     # create /LENOVO/HOME/test folder
-    ftp.cwd('test')
-    #ftp.dir()
-    print("FTP CONNECTED")
-    #upload(ftp, sys.argv[2], sys.argv[3] if len(sys.argv) >= 4 else None)
-    with open('boot.py', 'rb') as fp:
-        ftp.storbinary('STOR boot.py', fp, blocksize=8192,
+    ftp.mkd('test')
+
+    # change folder to /LENOVO/HOME/test
+    ftp.mkd('test')
+
+    # create a file and send it to the server
+    with open('test.txt', 'w+') as fp:
+        fp.write("Hello FTP...")
+    
+    with open('test.txt', 'rb') as fp:
+        ftp.storbinary('STOR test_server.txt', fp, blocksize=8192,
                       callback=None, rest=None)
+
+    # get the file from the server
+    with open('test_server.txt', 'w+') as fp:
+        ftp.retrbinary("RETR test_server.txt", fp.write, blocksize=8192, rest=None)
+
     ftp.quit()
 
-    print("FTP SEND")
+    print("DONE")
