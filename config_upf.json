@@ -1,4 +1,0 @@
-{
-	"wifi" : {"ssid": "event@upf", "pass": "a10event"},
-	"ftp" : {"host": "ftp.rp.upf.edu", "port": 990, "user": "ftp.rp.upf.edu|pzinemanas", "pass": "13+Jibukapo"},
-}
