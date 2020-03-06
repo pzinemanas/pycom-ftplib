@@ -1,0 +1,4 @@
+{
+	"wifi" : {"ssid": "xxxxxx", "pass": "xxxxxx"},
+	"ftp" : {"host": "ftp.xxxxx.xxx", "port": 21, "user": "xxxxxx", "pass": "xxxxxx"},
+}
