@@ -234,7 +234,6 @@ class FTP:
         sock = None
         for sock_i in _resolve_addr(addr):
             af, _, proto, _, sa = sock_i
-            print(af,proto,sa)
             try:
                 sock = socket(af, _socket.SOCK_STREAM, proto)
                 break
@@ -242,7 +241,6 @@ class FTP:
                 if sock:
                     sock.close()
                 continue
-        print(sock)
         if not sock:
             raise Error("Could not connect to %r" % (addr,))
 
@@ -298,8 +296,7 @@ class FTP:
 
         self.sock = self._create_connection((self.host, self.port), timeout,
                                             source_address,use_ssl=use_ssl)
-        #self.af = self.sock.family
-        #print("family")
+
         self.file = self.sock.makefile('rb')
         self.welcome = self.getresp()
         return self.welcome
@@ -406,7 +403,6 @@ class FTP:
     def voidresp(self):
         """Expect a response beginning with '2'."""
         resp = self.getresp()
-        print(resp)
         #if not resp.startswith('2'):
         if resp[0] != '2':
             raise error_reply(resp)
@@ -561,16 +557,11 @@ class FTP:
             host, port = self.makepasv()
             conn = self._create_connection((host, port), self.timeout,
                                            self.source_address, use_ssl=False)
-            #conn = ssl.wrap_socket(conn)
-            #self.voidcmd('PBSZ 0')
-            #conn.sendall('PROT P')
-            print('coonected')
             try:
                 if rest is not None:
                     self.sendcmd("REST %s" % rest)
 
                 resp = self.sendcmd(cmd)
-                print('resp', resp)
                 # Some servers apparently send a 200 reply to
                 # a LIST or STOR command, before the 150 reply
                 # (and way before the 226 reply). This seems to
@@ -579,7 +570,6 @@ class FTP:
                 # this response.
                 if resp[0] == '2':
                     resp = self.getresp()
-                    print('resp2', resp)
 
                 if resp[0] != '1':
                     raise error_reply(resp)
@@ -610,7 +600,6 @@ class FTP:
         if resp.startswith('150'):
             # this is conditional in case we received a 125
             size = parse150(resp)
-        print('end transfer')
         return conn, size
 
     def transfercmd(self, cmd, rest=None):
@@ -670,9 +659,8 @@ class FTP:
         conn = self.transfercmd(cmd, rest)
         #fp = conn.makefile('rb')
         while True:
-            print('retr...')
             data = conn.recv(blocksize)#fp.readline(blocksize) #conn.readline(blocksize)#
-            print(data)
+
             if not data:
                 break
             callback(data)
@@ -706,15 +694,12 @@ class FTP:
         conn.settimeout(150)
         #fp = conn.makefile('rb')
         #conn.close()
-        print('make file')
+
         #line = conn.readline(self.maxline + 1).decode()
         #print('line',line)
         #with conn.makefile('rb') as fp:
         while True:
-            #time.sleep_ms(100)
-            print('readline')
             line = conn.readline(self.maxline + 1).decode() #readline
-            print('line',line)
 
             if not line:
                 break
