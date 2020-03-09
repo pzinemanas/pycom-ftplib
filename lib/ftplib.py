@@ -226,7 +226,7 @@ class FTP:
                 if self.sock is not None:
                     self.close()
 
-    def _create_connection(self, addr, timeout=None, source_address=None, use_ssl=True):
+    def _create_connection(self, addr, timeout=None, source_address=None, use_ssl=False):
         #addrinfos = _resolve_addr(addr)
         #af = addrinfos[0][0]
         #self.af = af
@@ -274,7 +274,7 @@ class FTP:
  #       else:
  #           raise Error("Could not connect to %r" % (addr,))
 
-    def connect(self, host=None, port=None, timeout=None, source_address=None, use_ssl=True):
+    def connect(self, host=None, port=None, timeout=None, source_address=None, use_ssl=False):
         """Connect to host.
 
         Arguments are:
