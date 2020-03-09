@@ -1,5 +1,5 @@
 # pycom-ftplib
-This repository contains An FTP client library for pycom boards (MicroPython). It is based in the [micropython-ftplib](https://github.com/SpotlightKid/micropython-ftplib) implementation. Modifications were done in order to work in the pycom modules, thought the library was only tested on WiPy 3.0. FTP_TLS is not yet fully tested. 
+This repository contains An FTP client library for pycom boards (MicroPython). It is based in the [micropython-ftplib](https://github.com/SpotlightKid/micropython-ftplib) implementation. Modifications to the ```lib/ftplib.py'''were done in order to work in the pycom modules. This code was only tested on WiPy 3.0 and FTP_TLS is not fully tested yet.
 
 ## Organization of this repository 
 
@@ -13,3 +13,6 @@ root/
 |- config.json ________________________ # Configuration file (WiFi and FTP parameters)
 |
 ````
+## LICENSE
+
+Only modifications of the original repository have Copyright (c) of Pablo Zinemanas 2020. This code has the same [Python Software Foundation](https://docs.python.org/3/license.html) License than the original library.
