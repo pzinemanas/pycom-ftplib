@@ -227,33 +227,56 @@ class FTP:
                     self.close()
 
     def _create_connection(self, addr, timeout=None, source_address=None, use_ssl=True):
-        addrinfos = _resolve_addr(addr)
-        af = addrinfos[0][0]
-        self.af = af
+        #addrinfos = _resolve_addr(addr)
+        #af = addrinfos[0][0]
+        #self.af = af
 
-        sock = socket()
+        sock = None
+        for sock_i in _resolve_addr(addr):
+            af, _, proto, _, sa = sock_i
+            print(af,proto,sa)
+            try:
+                sock = socket(af, _socket.SOCK_STREAM, proto)
+                break
+            except:
+                if sock:
+                    sock.close()
+                continue
+        print(sock)
+        if not sock:
+            raise Error("Could not connect to %r" % (addr,))
+
+        #sock = socket()
 
         if use_ssl:
             sock = ssl.wrap_socket(sock)
         
-        for af, _, _, _, addr in addrinfos:
-            try:
-                sock.connect(addr)
-            except Exception as exc:
-                if self.debugging:
-                    print(exc)
-            else:
-                if timeout and timeout is not _GLOBAL_DEFAULT_TIMEOUT:
-                    sock.settimeout(timeout)
-                try:
-                    sock.family = af
-                except:
-                    pass
-                return sock
-        else:
-            raise Error("Could not connect to %r" % (addr,))
+        self.af = af
+     
+        if timeout and timeout is not _GLOBAL_DEFAULT_TIMEOUT:
+            sock.settimeout(timeout)
 
-    def connect(self, host=None, port=None, timeout=None, source_address=None):
+        sock.connect(sa)
+        return sock
+
+ #       for af, _, _, _, addr in addrinfos:
+ #           try:
+ #               sock.connect(addr)
+ #           except Exception as exc:
+ #               if self.debugging:
+ #                   print(exc)
+ #           else:
+ #               if timeout and timeout is not _GLOBAL_DEFAULT_TIMEOUT:
+ #                   sock.settimeout(timeout)
+ #               try:
+ #                   sock.family = af
+ #               except:
+ #                   pass
+ #               return sock
+ #       else:
+ #           raise Error("Could not connect to %r" % (addr,))
+
+    def connect(self, host=None, port=None, timeout=None, source_address=None, use_ssl=True):
         """Connect to host.
 
         Arguments are:
@@ -274,7 +297,7 @@ class FTP:
             source_address = self.source_address
 
         self.sock = self._create_connection((self.host, self.port), timeout,
-                                            source_address)
+                                            source_address,use_ssl=use_ssl)
         #self.af = self.sock.family
         #print("family")
         self.file = self.sock.makefile('rb')
@@ -538,13 +561,16 @@ class FTP:
             host, port = self.makepasv()
             conn = self._create_connection((host, port), self.timeout,
                                            self.source_address, use_ssl=False)
-        
+            #conn = ssl.wrap_socket(conn)
+            #self.voidcmd('PBSZ 0')
+            #conn.sendall('PROT P')
+            print('coonected')
             try:
                 if rest is not None:
                     self.sendcmd("REST %s" % rest)
 
                 resp = self.sendcmd(cmd)
-
+                print('resp', resp)
                 # Some servers apparently send a 200 reply to
                 # a LIST or STOR command, before the 150 reply
                 # (and way before the 226 reply). This seems to
@@ -553,6 +579,7 @@ class FTP:
                 # this response.
                 if resp[0] == '2':
                     resp = self.getresp()
+                    print('resp2', resp)
 
                 if resp[0] != '1':
                     raise error_reply(resp)
@@ -583,7 +610,7 @@ class FTP:
         if resp.startswith('150'):
             # this is conditional in case we received a 125
             size = parse150(resp)
-
+        print('end transfer')
         return conn, size
 
     def transfercmd(self, cmd, rest=None):
@@ -641,8 +668,11 @@ class FTP:
         self.voidcmd('TYPE I')
         #with self.transfercmd(cmd, rest) as conn:
         conn = self.transfercmd(cmd, rest)
-        while 1:
-            data = conn.recv(blocksize)
+        #fp = conn.makefile('rb')
+        while True:
+            print('retr...')
+            data = conn.recv(blocksize)#fp.readline(blocksize) #conn.readline(blocksize)#
+            print(data)
             if not data:
                 break
             callback(data)
@@ -670,21 +700,27 @@ class FTP:
         if callback is None:
             callback = print
 
-        self.sendcmd('TYPE A')
+        self.sendcmd('TYPE A')#self.sendcmd('TYPE A')
 
         conn = self.transfercmd(cmd)
-        fp = conn.makefile('rb')
+        conn.settimeout(150)
+        #fp = conn.makefile('rb')
+        #conn.close()
         print('make file')
-
+        #line = conn.readline(self.maxline + 1).decode()
+        #print('line',line)
+        #with conn.makefile('rb') as fp:
         while True:
-            line = fp.readline(self.maxline + 1).decode()
+            #time.sleep_ms(100)
+            print('readline')
+            line = conn.readline(self.maxline + 1).decode() #readline
             print('line',line)
 
             if not line:
                 break
 
             if len(line) > self.maxline:
-                conn.close()
+                #conn.close()
                 raise Error("got more than %d bytes" % self.maxline)
 
             if self.debugging > 2:
@@ -695,7 +731,7 @@ class FTP:
             elif line[-1:] == '\n':
                 line = line[:-1]
 
-            callback(line)
+            #callback(line)
 
         conn.close()
 
@@ -758,7 +794,6 @@ class FTP:
             buf = fp.read(blocksize)
             if not buf:
                 break
-            print('send_buf')
             conn.sendall(buf)
             
             if callback:
