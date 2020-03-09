@@ -1,5 +1,5 @@
 # pycom-ftplib
-This repository contains An FTP client library for pycom boards (MicroPython). It is based in the [micropython-ftplib](https://github.com/SpotlightKid/micropython-ftplib) implementation. Modifications to the ```lib/ftplib.py'''were done in order to work in the pycom modules. This code was only tested on WiPy 3.0 and FTP_TLS is not fully tested yet.
+This repository contains An FTP client library for pycom boards (MicroPython). It is based in the [micropython-ftplib](https://github.com/SpotlightKid/micropython-ftplib) implementation. Modifications to the `lib/ftplib.py` were done in order to work in the pycom modules. This code was only tested on WiPy 3.0 and FTP_TLS is not fully tested yet.
 
 ## Organization of this repository 
 
