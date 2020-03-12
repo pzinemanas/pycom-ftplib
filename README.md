@@ -15,4 +15,4 @@ root/
 ````
 ## LICENSE
 
-Only modifications of the original repository have Copyright (c) of Pablo Zinemanas 2020. This code has the same [Python Software Foundation](https://docs.python.org/3/license.html) License than the original library.
+Code in file `main.py` and modifications of `lib/ftplib.py` have Copyright (c) of Pablo Zinemanas 2020. This code has the same [Python Software Foundation](https://docs.python.org/3/license.html) License than the original library.
