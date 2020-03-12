@@ -1,6 +1,21 @@
 #!/usr/bin/env micropython
 # -*- coding: utf-8 -*-
 
+""" main.py
+
+    Main program to test functionalities of ftplib library.
+
+    The ssid and password of WiFi network and ftp credentials are
+    in config.json file.
+
+    The script establish WLAN and FTP connections, login to FTP server,
+    create directories and upload, download and remove files. 
+    
+    2020/03, Pablo Zinemanas
+    pablo.zinemanas@upf.edu
+
+"""
+
 from network import WLAN
 import ftplib
 import time
