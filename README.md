@@ -14,7 +14,7 @@ root/
 |
 ````
 ## Usage
-To use this library, clone this repository, change `config.json` file with your WiFi and FTP credentials and [program](https://docs.pycom.io/gettingstarted/programming/) all files to the board. 
+To use this library, clone this repository, change `config.json` file with your WiFi and FTP credentials, and [program](https://docs.pycom.io/gettingstarted/programming/) all files to the board. 
 
 ## LICENSE
 
