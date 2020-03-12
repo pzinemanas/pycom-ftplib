@@ -355,16 +355,20 @@ class FTP:
     # Internal: return one line from the server, stripping CRLF.
     # Raise EOFError if the connection is closed
     def getline(self):
-        line = self.file.readline(self.maxline + 1).decode()
+        while(1):
+            line = self.file.readline(self.maxline + 1)#.decode()
+            if line is not None:
+                line = line.decode()
 
-        if len(line) > self.maxline:
-            raise Error("got more than %d bytes" % self.maxline)
-        if self.debugging > 1:
-            print('*get*', self.sanitize(line))
-        if not line:
-            raise EOFError
-        
-        return line.rstrip('\r\n')
+                if len(line) > self.maxline:
+                    raise Error("got more than %d bytes" % self.maxline)
+                if self.debugging > 1:
+                    print('*get*', self.sanitize(line))
+                if not line:
+                    raise EOFError
+                
+                return line.rstrip('\r\n')
+
 
     # Internal: get a response from the server, which may possibly
     # consist of multiple lines.  Return a single string with no
